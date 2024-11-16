@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.povertyhelpsystem.mapper.PovertyMapper">
+
+
+    <select id="count" resultType="Integer">
+        SELECT count(*)
+        FROM poverty
+        <where>
+            <if test="name != null and name != ''">
+                AND name LIKE concat('%', #{name}, '%')
+            </if>
+            <if test="age != null">
+                AND age = #{age}
+            </if>
+            <if test="gender != null">
+                AND gender = #{gender}
+            </if>
+            <if test="povertyId != null and povertyId != ''">
+                AND povertyId = #{povertyId}
+            </if>
+            <if test="begin != null and end != null">
+                AND comeDate BETWEEN #{begin} AND #{end}
+            </if>
+        </where>
+    </select>
+
+    <!-- 分页查询 -->
+    <select id="page" resultType="com.example.povertyhelpsystem.pojo.Poverty">
+        SELECT *
+        FROM poverty
+        <where>
+            <if test="name != null and name != ''">
+                AND name LIKE concat('%', #{name}, '%')
+            </if>
+            <if test="age != null">
+                AND age = #{age}
+            </if>
+            <if test="gender != null">
+                AND gender = #{gender}
+            </if>
+            <if test="povertyId != null and povertyId != ''">
+                AND povertyId = #{povertyId}
+            </if>
+            <if test="begin != null and end != null">
+                AND comeDate BETWEEN #{begin} AND #{end}
+            </if>
+        </where>
+        ORDER BY povertyId ASC
+        LIMIT #{start}, #{pagesize}
+    </select>
+
+    <insert id="insertPoverty">
+        INSERT INTO poverty (name, age, gender, povertyId, comeDate, volunteerId, need)
+        VALUES (#{name}, #{age}, #{gender}, #{povertyId}, #{comeDate}, #{volunteerId}, #{need})
+    </insert>
+
+
+    <update id="updateVolunteer_PovertyNumber_by_updatePoverty">
+        <!-- 如果 volunteerId 不为空，则更新对应志愿者的 povertyNumber -->
+        <if test="volunteerId != null">
+            UPDATE volunteer
+            SET povertyNumber = povertyNumber - 1
+            WHERE volunteerId = #{volunteerId};
+        </if>
+    </update>
+
+    <update id="updatePoverty">
+        <!-- 更新贫困人员信息 -->
+        UPDATE poverty
+        SET
+        name = #{name},
+        age = #{age},
+        gender = #{gender},
+        need = #{need},
+        volunteerId = NULL
+        WHERE povertyId = #{povertyId};
+    </update>
+
+
+
+
+</mapper>

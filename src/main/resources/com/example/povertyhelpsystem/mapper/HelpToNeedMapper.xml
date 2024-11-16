@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.povertyhelpsystem.mapper.HelpToNeedMapper">
+
+    <select id="count" resultType="Integer">
+        SELECT count(*)
+        FROM poverty
+        <where>
+            <if test="povertyName != null and povertyName != ''">
+                AND name LIKE concat('%', #{povertyName}, '%')
+            </if>
+            <if test="povertyId != null and povertyId != ''">
+                AND povertyId = #{povertyId}
+            </if>
+        </where>
+    </select>
+
+    <!-- 分页查询 -->
+    <select id="page" resultType="com.example.povertyhelpsystem.pojo.PTV">
+        SELECT p.name povertyName, p.povertyId, p.need, v.name volunteerName, v.volunteerId, v.help
+        FROM poverty p
+        LEFT JOIN volunteer v ON p.volunteerId = v.volunteerId
+        <where>
+            <if test="povertyName != null and povertyName != ''">
+                AND p.name LIKE concat('%', #{povertyName}, '%')
+            </if>
+
+            <if test="povertyId != null and povertyId != ''">
+                AND p.povertyId = #{povertyId}
+            </if>
+
+        </where>
+        ORDER BY p.povertyId ASC
+        LIMIT #{start}, #{pagesize}
+    </select>
+
+</mapper>

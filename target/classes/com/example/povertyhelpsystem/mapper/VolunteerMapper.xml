@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.povertyhelpsystem.mapper.VolunteerMapper">
+
+
+    <select id="count" resultType="Integer">
+        SELECT count(*)
+        FROM volunteer
+        <where>
+            <if test="name != null and name != ''">
+                AND name LIKE concat('%', #{name}, '%')
+            </if>
+            <if test="age != null">
+                AND age = #{age}
+            </if>
+            <if test="gender != null">
+                AND gender = #{gender}
+            </if>
+            <if test="volunteerId != null and volunteerId != ''">
+                AND volunteerId = #{volunteerId}
+            </if>
+            <if test="begin != null and end != null">
+                AND comeDate BETWEEN #{begin} AND #{end}
+            </if>
+        </where>
+    </select>
+
+    <!-- 分页查询 -->
+    <select id="page" resultType="com.example.povertyhelpsystem.pojo.Volunteer">
+        SELECT *
+        FROM volunteer
+        <where>
+            <if test="name != null and name != ''">
+                AND name LIKE concat('%', #{name}, '%')
+            </if>
+            <if test="age != null">
+                AND age = #{age}
+            </if>
+            <if test="gender != null">
+                AND gender = #{gender}
+            </if>
+            <if test="volunteerId != null and volunteerId != ''">
+                AND povertyId = #{povertyId}
+            </if>
+            <if test="begin != null and end != null">
+                AND comeDate BETWEEN #{begin} AND #{end}
+            </if>
+        </where>
+        ORDER BY volunteerId ASC
+        LIMIT #{start}, #{pagesize}
+    </select>
+
+    <update id="updateVolunteer">
+        UPDATE volunteer
+        SET name = #{name},
+            age = #{age},
+            gender = #{gender},
+            help = #{help},
+            povertyNumber = 0
+        WHERE volunteerId = #{volunteerId}
+    </update>
+    <update id="updatePoverty_volunteerId_by_updateVolunteer">
+        UPDATE poverty
+        SET volunteerId = null
+        WHERE volunteerId = #{volunteerId}
+    </update>
+
+</mapper>
